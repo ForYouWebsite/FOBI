@@ -101,25 +101,25 @@ const TEAM = [
     name: "Syalwa Cahya Maulida",
     role: "Ketua 1",
     sekolah: "SMAN 1 Banjar",
-    img: "SLP-6707974.jpg",
+    img: "SLP-6707974.JPG",
   },
   {
     name: "Sri Mustika",
     role: "Sekretaris Umum",
     sekolah: "SMA 3 Banjar",
-    img: "SLP-6707955.jpg",
+    img: "SLP-6707955.JPG",
   },
   {
     name: "Rayvando Riffiand",
     role: "Sekretaris 1",
     sekolah: "SMAN 1 Banjar",
-    img: "SLP-6708002.jpg",
+    img: "SLP-6708002.JPG",
   },
   {
     name: "Clarisa",
     role: "Bendahara Umum",
     sekolah: "SMA 3 Banjar",
-    img: "SLP-6708008.jpg",
+    img: "SLP-6708008.JPG",
   },
 ];
 
@@ -147,10 +147,32 @@ export default function App() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 100);
 
+      // 🔥 SCROLL SPY (INI YANG PENTING)
+      const sections = ["home", "about", "shop", "proker", "footer"];
+      let current = "home";
+
+      sections.forEach((section) => {
+        const element = document.getElementById(section);
+
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const offset = window.scrollY + rect.top - 200;
+          const height = element.offsetHeight;
+
+          if (window.scrollY >= offset && window.scrollY < offset + height) {
+            current = section;
+          }
+        }
+      });
+
+      setActiveTab(current);
+
+      // 🔥 REVEAL ANIMATION (punya lu)
       const reveals = document.querySelectorAll(".reveal");
       reveals.forEach((el) => {
         const windowHeight = window.innerHeight;
         const elementTop = el.getBoundingClientRect().top;
+
         if (elementTop < windowHeight - 100) {
           el.classList.add("opacity-100", "translate-y-0");
           el.classList.remove("opacity-0", "translate-y-[30px]");
@@ -160,6 +182,7 @@ export default function App() {
 
     window.addEventListener("scroll", handleScroll);
     handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -236,7 +259,10 @@ export default function App() {
               <a
                 key={item}
                 href={`#${item}`}
-                className="relative hover:text-blue-600 transition-colors group text-sm uppercase tracking-wide"
+                onClick={() => setActiveTab(item)}
+                className={`relative transition-colors group text-sm uppercase tracking-wide
+  ${activeTab === item ? "text-blue-600" : "text-slate-600 hover:text-blue-600"}
+`}
               >
                 {item === "proker"
                   ? "Program"
@@ -245,7 +271,11 @@ export default function App() {
                     : item === "shop"
                       ? "Katalog"
                       : "Beranda"}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
+                <span
+                  className={`absolute -bottom-1 left-0 h-0.5 bg-blue-600 transition-all duration-300
+  ${activeTab === item ? "w-full" : "w-0 group-hover:w-full"}
+`}
+                />{" "}
               </a>
             ))}
           </nav>
@@ -632,7 +662,10 @@ export default function App() {
         </div>
       </section>
 
-      <footer className="bg-[#0f172a] text-slate-400 pt-32 pb-24 lg:pb-12 border-t border-slate-800">
+      <footer
+        id="footer"
+        className="bg-[#0f172a] text-slate-400 pt-32 pb-24 lg:pb-12 border-t border-slate-800"
+      >
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-3 gap-16 mb-20">
             {/* Brand Section */}
