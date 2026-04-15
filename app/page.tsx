@@ -32,7 +32,7 @@ const PRODUCTS = [
   {
     id: 1,
     name: "PDH (Pakaian Dinas Harian)",
-    price: 155000,
+    price: 150000,
     category: "Pakaian",
     img: "ciko1.png",
   },
@@ -89,13 +89,13 @@ const TEAM = [
     name: "Farisha Mutiara Azzahra",
     role: "Ketua Umum",
     sekolah: "SMAN 3 Banjar",
-    img: "SLP-6707986.jpg",
+    img: "SLP-6707986.JPG",
   },
   {
     name: "Soleh Saefulloh",
     role: "Ketua 1",
     sekolah: "SMKN 1 Banjar",
-    img: "SLP-6708033.jpg",
+    img: "SLP-6708033.JPG",
   },
   {
     name: "Syalwa Cahya Maulida",
@@ -232,7 +232,7 @@ export default function App() {
             </div>
           </div>
           <nav className="flex items-center gap-10 font-bold text-slate-600">
-            {["home", "about", "shop", "proker", "stats"].map((item) => (
+            {["home", "about", "shop", "proker"].map((item) => (
               <a
                 key={item}
                 href={`#${item}`}
@@ -240,13 +240,11 @@ export default function App() {
               >
                 {item === "proker"
                   ? "Program"
-                  : item === "stats"
-                    ? "Statistik"
-                    : item === "about"
-                      ? "Tentang Kami"
-                      : item === "shop"
-                        ? "Katalog"
-                        : "Beranda"}
+                  : item === "about"
+                    ? "Tentang Kami"
+                    : item === "shop"
+                      ? "Katalog"
+                      : "Beranda"}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
               </a>
             ))}
@@ -296,14 +294,6 @@ export default function App() {
           >
             <ShoppingBag className="w-5 h-5" />
             <span className="text-[10px] font-bold">Katalog</span>
-          </a>
-          <a
-            href="#stats"
-            onClick={() => setActiveTab("stats")}
-            className={`flex flex-col items-center gap-1 transition-colors ${activeTab === "stats" ? "text-blue-600" : "text-slate-400"}`}
-          >
-            <BarChart3 className="w-5 h-5" />
-            <span className="text-[10px] font-bold">Statistik</span>
           </a>
         </div>
       </nav>
@@ -676,7 +666,7 @@ export default function App() {
                   Menu
                 </h4>
                 <ul className="space-y-4 text-sm font-medium">
-                  {["Home", "About", "Shop", "Proker", "Stats"].map((link) => (
+                  {["Home", "About", "Shop", "Proker"].map((link) => (
                     <li key={link}>
                       <a
                         href={`#${link.toLowerCase().replace(" ", "-")}`}
