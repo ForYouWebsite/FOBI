@@ -1,4 +1,4 @@
-import SideBar from "../sidebar/page";
+import SideBar from "../../sidebar/page";
 
 export default function Informasi() {
   return (

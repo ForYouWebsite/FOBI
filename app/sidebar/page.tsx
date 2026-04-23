@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation"; // ✅ Import router & pathname
+import { useMemo } from "react";
+
 import {
   LayoutDashboard,
   Users,
@@ -30,8 +32,44 @@ export default function SideBar() {
   };
   const router = useRouter(); // ✅ Inisialisasi router
   const pathname = usePathname(); // ✅ Untuk sinkronisasi active menu dengan URL
+  // Sidebar menu items (with role check)
+  const menuItems = useMemo(() => {
+    if (user?.role === "admin") {
+      return [
+        { id: "sistem", label: "Sistem", icon: Home, path: "/admin/dashboard" },
+        { id: "event", label: "Event", icon: Bell, path: "/admin/proker" },
+      ];
+    }
 
-  // Load user data from storage
+    return [
+      { id: "dashboard", label: "Home", icon: Home, path: "/user/dashboard" },
+      {
+        id: "members",
+        label: "Informasi Data",
+        icon: Users,
+        path: "/user/informasi",
+      },
+      {
+        id: "programs",
+        label: "Daftar Pengurus",
+        icon: FileText,
+        path: "/user/daftar-pengurus",
+      },
+      {
+        id: "calendar",
+        label: "Pendaftaran Event",
+        icon: Calendar,
+        path: "/user/events",
+      },
+      {
+        id: "settings",
+        label: "Pengaturan",
+        icon: Settings,
+        path: "/user/settings",
+      },
+      { id: "help", label: "Bantuan", icon: HelpCircle, path: "/help" },
+    ];
+  }, [user]);
   useEffect(() => {
     const storedUser =
       localStorage.getItem("user") || sessionStorage.getItem("user");
@@ -41,7 +79,6 @@ export default function SideBar() {
     }
   }, []);
 
-  // ✅ Sinkronisasi activeMenu dengan URL saat ini
   useEffect(() => {
     const currentPath = pathname || "/";
     const activeItem = menuItems.find(
@@ -52,41 +89,13 @@ export default function SideBar() {
     if (activeItem) {
       setActiveMenu(activeItem.id);
     }
-  }, [pathname]);
-
+  }, [pathname, menuItems]);
   const [activeMenu, setActiveMenu] = useState("dashboard");
 
-  // Sidebar menu items - ✅ Ditambahkan property 'path' untuk navigasi
-  const menuItems = [
-    { id: "dashboard", label: "Home", icon: Home, path: "/user/dashboard" },
-    {
-      id: "members",
-      label: "Informasi Data",
-      icon: Users,
-      path: "/user/informasi",
-    },
-    {
-      id: "programs",
-      label: "Daftar Pengurus",
-      icon: FileText,
-      path: "/",
-    },
-    {
-      id: "calendar",
-      label: "Pendaftaran Event",
-      icon: Calendar,
-      path: "/events",
-    },
-    { id: "settings", label: "Pengaturan", icon: Settings, path: "/settings" },
-    { id: "help", label: "Bantuan", icon: HelpCircle, path: "/help" },
-  ];
-
-  // Handle navigation - ✅ Fungsi navigasi terpisah
   const handleNavigation = (path: string) => {
     router.push(path);
-    setMobileMenuOpen(false); // Tutup mobile menu setelah navigasi
+    setMobileMenuOpen(false);
   };
-
   // Handle logout
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -198,7 +207,7 @@ export default function SideBar() {
           {sidebarOpen && (
             <div className="flex items-center gap-3">
               <img
-                src="../logo.png"
+                src="/logo.png"
                 alt="Logo FOBI"
                 className="w-10 h-10 object-contain drop-shadow-md"
               />
@@ -214,7 +223,7 @@ export default function SideBar() {
           )}
           {!sidebarOpen && (
             <img
-              src="../logo.png"
+              src="/logo.png"
               alt="Logo FOBI"
               className="w-10 h-10 object-contain drop-shadow-md"
             />
@@ -232,14 +241,16 @@ export default function SideBar() {
 
         {/* Navigation Menu */}
         <nav className="p-4 space-y-2 overflow-y-auto max-h-[calc(100vh-180px)]">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeMenu === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleNavigation(item.path)} // ✅ Panggil fungsi navigasi
-                className={`
+          {!user
+            ? null
+            : menuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeMenu === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleNavigation(item.path)}
+                    className={`
                   w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200 group
                   ${
                     isActive
@@ -248,51 +259,50 @@ export default function SideBar() {
                   }
                   ${!sidebarOpen && "justify-center px-3"}
                 `}
-              >
-                <Icon size={20} className="flex-shrink-0" />
-                {sidebarOpen && (
-                  <span className="font-semibold text-sm whitespace-nowrap">
-                    {item.label}
-                  </span>
-                )}
-                {isActive && sidebarOpen && (
-                  <div className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse" />
-                )}
-              </button>
-            );
-          })}
+                  >
+                    <Icon size={20} className="flex-shrink-0" />
+                    {sidebarOpen && (
+                      <span className="font-semibold text-sm whitespace-nowrap">
+                        {item.label}
+                      </span>
+                    )}
+                    {isActive && sidebarOpen && (
+                      <div className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse" />
+                    )}
+                  </button>
+                );
+              })}
         </nav>
 
         {/* Sidebar Footer - User & Logout */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-100">
           {sidebarOpen ? (
-            <div className="space-y-3">
-              {/* User Profile */}
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50">
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm truncate text-slate-800">
-                    {user?.full_name || "User FOBI"}
-                  </p>
-                  <p className="text-xs truncate text-slate-500">
-                    {user?.role || "Anggota"}
-                  </p>
+            user && (
+              <div className="space-y-3">
+                {/* User Profile */}
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm truncate text-slate-800">
+                      {user.full_name}
+                    </p>
+                    <p className="text-xs truncate text-slate-500">
+                      {user.role}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all text-slate-500 hover:bg-slate-100"
-              >
-                <LogOut size={18} />
-                <span className="font-semibold text-sm">Keluar</span>
-              </button>
-            </div>
+                {/* Logout Button */}
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all text-slate-500 hover:bg-slate-100"
+                >
+                  <LogOut size={18} />
+                  <span className="font-semibold text-sm">Keluar</span>
+                </button>
+              </div>
+            )
           ) : (
             <div className="flex flex-col items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
-                {user?.name?.charAt(0) || "U"}
-              </div>
               <button
                 onClick={handleLogout}
                 className="p-3 rounded-xl transition-all text-red-600 hover:bg-red-50"

@@ -48,9 +48,13 @@ export default function App() {
 
       toast.success(res.data.message || "Login berhasil!");
 
-      // ✅ redirect ke dashboard
+      // ✅ redirect berdasarkan role
       setTimeout(() => {
-        window.location.href = "/user/dashboard";
+        if (user.role === "admin") {
+          window.location.href = "/admin/dashboard";
+        } else {
+          window.location.href = "/user/dashboard";
+        }
       }, 1200);
     } catch (error: any) {
       toast.dismiss(loadingToast);
@@ -166,12 +170,6 @@ export default function App() {
                 <label className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">
                   Password
                 </label>
-                <a
-                  href="#"
-                  className="text-[10px] md:text-xs font-bold text-blue-600 hover:text-blue-700"
-                >
-                  Lupa Password?
-                </a>
               </div>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">

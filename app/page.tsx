@@ -1,6 +1,6 @@
 "use client";
-
 import React, { useState, useEffect, useRef, Profiler } from "react";
+import axios from "axios";
 import {
   Home,
   Info,
@@ -88,65 +88,7 @@ const socialLinks = [
     color: "hover:bg-red-600",
   },
 ];
-// Mock Data Proker (untuk Slider)
-const PROKER_DATA = [
-  {
-    title: "GATHPOS",
-    tag: "Learning Center",
-    deskripsi:
-      "Inti Acara: Sebuah ajang pertemuan strategis yang dirancang khusus untuk seluruh pengurus OSIS aktif se-Kota Banjar. Fokus Utama: Memperkuat jaringan kerja sama (kolaborasi) dan mempererat hubungan personal antar organisasi siswa.",
-    color: "bg-green-400",
-    img: "DSC02313.JPG",
-  },
-  {
-    title: "FRAME",
-    tag: "Media Center",
-    deskripsi:
-      "FRAME adalah festival media dan seni kreatif tahunan yang diselenggarakan untuk menampilkan dan mengapresiasi karya-karya terbaik yang dihasilkan oleh pelajar di seluruh Kota Banjar.",
-    color: "bg-blue-400",
-    img: "DSC02740.JPG",
-  },
-  {
-    title: "GAPURA",
-    tag: "Social Center",
-    deskripsi:
-      "Program pengabdian sosial yang dirancang seperti Kuliah Kerja Nyata (KKN) skala mini untuk memberikan dampak positif langsung kepada masyarakat.",
-    color: "bg-yellow-400",
-    img: "DSC02313.JPG",
-  },
-  {
-    title: "FOBI GOES TO SCHOOL",
-    tag: "Education",
-    deskripsi:
-      "Kunjungan rutin ke sekolah-sekolah untuk memberikan sosialisasi kepemimpinan dan pengenalan forum kepada siswa baru.",
-    color: "bg-purple-400",
-    img: "DSC02375.JPG",
-  },
-];
 
-// Mock Data Kegiatan Sedang Dilaksanakan
-const CURRENT_EVENTS = [
-  {
-    id: 1,
-    name: "Pendaftaran Pengurus FOBI 2024",
-    price: "Gratis",
-    date: "12 - 20 Mei 2024",
-    location: "Online / SMAN 1 Banjar",
-    description:
-      "Kesempatan emas untuk bergabung dalam organisasi pelajar terbesar di Kota Banjar. Jadilah bagian dari perubahan!",
-    img: "DSC02375.JPG",
-  },
-  {
-    id: 2,
-    name: "Workshop Digital Kreatif",
-    price: "Rp 15.000",
-    date: "25 Mei 2024",
-    location: "Aula Disdik Kota Banjar",
-    description:
-      "Belajar desain grafis dan manajemen media sosial khusus untuk pengurus OSIS.",
-    img: "DSC02740.JPG",
-  },
-];
 // Mock Data Pengurus/Struktur
 const TEAM = [
   {
@@ -193,11 +135,85 @@ export default function App() {
   const [currentMember, setCurrentMember] = useState(0);
   const [profileOpen, setProfileOpen] = useState(false);
   const [prokerIndex, setProkerIndex] = useState(0);
+  const [ongoingProkers, setOngoingProkers] = useState<any[]>([]);
+  const [loadingOngoing, setLoadingOngoing] = useState(true);
   const prokerSliderRef = React.useRef<HTMLDivElement | null>(null);
   // State untuk Toko
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [orderStep, setOrderStep] = useState(1); // 1: Form, 2: Payment
+  const [orderStep, setOrderStep] = useState(1);
+  const [prokers, setProkers] = useState<any[]>([]);
+  const [loadingProker, setLoadingProker] = useState(true);
+
+  const API = axios.create({
+    baseURL: "https://hmcf55cz-5000.asse.devtunnels.ms/api",
+  });
+
+  const BACKEND_URL = "https://hmcf55cz-5000.asse.devtunnels.ms";
+
+  const fetchProkers = async () => {
+    try {
+      setLoadingProker(true);
+
+      const res = await API.get("/proker");
+
+      // mapping biar sesuai format lama (PROKER_DATA)
+      const mapped = res.data.data.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        deskripsi: item.description,
+        tag: item.category || "Program",
+        img: item.image_url
+          ? `${BACKEND_URL}${item.image_url}`
+          : "https://via.placeholder.com/800x600?text=Proker",
+        color:
+          item.status === "ongoing"
+            ? "bg-green-400"
+            : item.status === "completed"
+              ? "bg-blue-400"
+              : item.status === "cancelled"
+                ? "bg-red-400"
+                : "bg-yellow-400",
+      }));
+
+      setProkers(mapped);
+    } catch (err) {
+      console.error("Fetch proker error:", err);
+    } finally {
+      setLoadingProker(false);
+    }
+  };
+  const fetchOngoingProkers = async () => {
+    try {
+      setLoadingOngoing(true);
+
+      const res = await API.get("/proker?status=ongoing");
+
+      const mapped = res.data.data.map((item: any) => ({
+        id: item.id,
+        name: item.title,
+        description: item.description,
+        img: item.image_url
+          ? `${BACKEND_URL}${item.image_url}`
+          : "https://via.placeholder.com/800x600?text=Proker",
+        price: item.category || "Program", // sementara dipakai jadi badge
+        date: item.start_date
+          ? new Date(item.start_date).toLocaleDateString("id-ID")
+          : "-",
+        location: "HMC Event", // fallback (karena backend belum ada field lokasi)
+      }));
+
+      setOngoingProkers(mapped);
+    } catch (err) {
+      console.error("Fetch ongoing error:", err);
+    } finally {
+      setLoadingOngoing(false);
+    }
+  };
+  useEffect(() => {
+    fetchProkers();
+    fetchOngoingProkers();
+  }, []);
   const [orderData, setOrderData] = useState({
     name: "",
     school: "",
@@ -875,7 +891,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* Proker Section */}
       {/* NEW: Kegiatan Sedang Dilaksanakan Section */}
       <section
         id="current-event"
@@ -898,50 +913,56 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {CURRENT_EVENTS.map((event, i) => (
-              <div
-                key={event.id}
-                className="bg-slate-50 rounded-[3rem] overflow-hidden border border-slate-100 flex flex-col md:flex-row reveal opacity-0 translate-y-[30px] transition-all"
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                <div className="md:w-2/5 relative h-64 md:h-auto">
-                  <img
-                    src={event.img}
-                    className="w-full h-full object-cover"
-                    alt={event.name}
-                  />
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-orange-600 shadow-sm">
-                    {event.price}
-                  </div>
-                </div>
-                <div className="p-8 md:w-3/5 space-y-4">
-                  <div className="space-y-2">
-                    <h3 className="text-2xl font-black text-slate-800 leading-tight">
-                      {event.name}
-                    </h3>
-                    <div className="flex flex-col gap-1 text-sm text-slate-500 font-medium">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-blue-600" />{" "}
-                        {event.date}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin size={14} className="text-blue-600" />{" "}
-                        {event.location}
-                      </div>
+            {loadingOngoing ? (
+              <p>Loading...</p>
+            ) : ongoingProkers.length === 0 ? (
+              <p>Tidak ada kegiatan yang sedang berlangsung</p>
+            ) : (
+              ongoingProkers.map((event, i) => (
+                <div
+                  key={event.id}
+                  className="bg-slate-50 rounded-[3rem] overflow-hidden border border-slate-100 flex flex-col md:flex-row reveal opacity-0 translate-y-[30px] transition-all"
+                  style={{ transitionDelay: `${i * 100}ms` }}
+                >
+                  <div className="md:w-2/5 relative h-64 md:h-auto">
+                    <img
+                      src={event.img}
+                      className="w-full h-full object-cover"
+                      alt={event.name}
+                    />
+                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-orange-600 shadow-sm">
+                      {event.price}
                     </div>
                   </div>
-                  <p className="text-slate-500 text-sm line-clamp-3">
-                    {event.description}
-                  </p>
-                  <a
-                    href="/login"
-                    className="inline-flex items-center gap-3 bg-blue-600 text-white px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95"
-                  >
-                    Detail Pendaftaran <ArrowRight size={18} />
-                  </a>
+                  <div className="p-8 md:w-3/5 space-y-4">
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-black text-slate-800 leading-tight">
+                        {event.name}
+                      </h3>
+                      <div className="flex flex-col gap-1 text-sm text-slate-500 font-medium">
+                        <div className="flex items-center gap-2">
+                          <Calendar size={14} className="text-blue-600" />{" "}
+                          {event.date}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin size={14} className="text-blue-600" />{" "}
+                          {event.location}
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-slate-500 text-sm line-clamp-3">
+                      {event.description}
+                    </p>
+                    <a
+                      href="/login"
+                      className="inline-flex items-center gap-3 bg-blue-600 text-white px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95"
+                    >
+                      Detail Pendaftaran <ArrowRight size={18} />
+                    </a>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -987,7 +1008,7 @@ export default function App() {
               className="flex gap-8 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-8 px-2"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {PROKER_DATA.map((item, i) => (
+              {prokers.map((item, i) => (
                 <div
                   key={i}
                   className="min-w-full md:min-w-[400px] snap-center bg-white border border-slate-100 rounded-[3rem] p-4 group transition-all hover:shadow-2xl"
