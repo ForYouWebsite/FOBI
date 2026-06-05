@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState } from "react";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, LogIn } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Link from "next/link";
 export default function App() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -121,7 +123,7 @@ export default function App() {
           {/* Header untuk Mobile */}
           <div className="lg:hidden flex flex-col items-center mb-8">
             <img
-              src="24.png"
+              src="logo.png"
               alt="Logo"
               className="w-20 h-20 object-contain mb-4 drop-shadow-md"
             />
@@ -236,6 +238,12 @@ export default function App() {
                 Daftar Akun Baru
               </a>
             </p>
+            <Link
+              href="/"
+              className="text-red-600 font-black hover:underline underline-offset-4"
+            >
+              Kembali
+            </Link>
           </div>
 
           {/* Footer Mobile Only */}

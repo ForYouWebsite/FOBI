@@ -169,7 +169,7 @@ export default function ProkerAdmin() {
                 className="w-full bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-700 text-sm md:text-base shadow-sm"
               />
             </div>
-            <button
+            {/* <button
               onClick={fetchProkers}
               disabled={loading}
               className="inline-flex items-center justify-center gap-2 bg-white/80 backdrop-blur-md border border-slate-200 text-slate-700 px-5 py-3 rounded-2xl font-semibold hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-sm disabled:opacity-50"
@@ -178,7 +178,7 @@ export default function ProkerAdmin() {
                 className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
               />
               Refresh
-            </button>
+            </button> */}
           </div>
 
           {/* Content Card */}

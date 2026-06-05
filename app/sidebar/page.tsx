@@ -41,21 +41,26 @@ export default function SideBar({ onToggle }: SideBarProps) {
   const menuItems = useMemo(() => {
     if (user?.role === "admin") {
       return [
-        { id: "sistem", label: "Sistem", icon: Home, path: "/admin/dashboard" },
+        {
+          id: "dashboard",
+          label: "Dashboard",
+          icon: Home,
+          path: "/admin/dashboard",
+        },
         { id: "event", label: "Event", icon: Bell, path: "/admin/proker" },
-        { id: "member", label: "Pengurus", icon: Users, path: "/admin/member" },
-        {
-          id: "struktur",
-          label: "Struktur",
-          icon: Users,
-          path: "/admin/struktur",
-        },
-        {
-          id: "batch",
-          label: "Batch",
-          icon: Users,
-          path: "/admin/batch",
-        },
+        { id: "member", label: "Users", icon: Users, path: "/admin/member" },
+        // {
+        //   id: "struktur",
+        //   label: "Struktur",
+        //   icon: Users,
+        //   path: "/admin/struktur",
+        // },
+        // {
+        //   id: "batch",
+        //   label: "Batch",
+        //   icon: Users,
+        //   path: "/admin/batch",
+        // },
       ];
     }
 
@@ -307,7 +312,7 @@ export default function SideBar({ onToggle }: SideBarProps) {
             user && (
               <div className="space-y-3">
                 {/* User Profile */}
-                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50">
+                {/* <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50">
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-sm truncate text-slate-800">
                       {user.full_name}
@@ -316,15 +321,15 @@ export default function SideBar({ onToggle }: SideBarProps) {
                       {user.role}
                     </p>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Logout Button */}
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all text-slate-500 hover:bg-slate-100"
+                  className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-2xl transition-all text-red-600 hover:bg-slate-100"
                 >
                   <LogOut size={18} />
-                  <span className="font-semibold text-sm">Keluar</span>
+                  <span className="font-semibold text-sm">Logout</span>
                 </button>
               </div>
             )

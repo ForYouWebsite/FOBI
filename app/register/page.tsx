@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -13,6 +14,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import Link from "next/link";
 export default function App() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -256,6 +258,12 @@ export default function App() {
                 Masuk ke Portal
               </a>
             </p>
+            <Link
+              href="/"
+              className="text-red-600 font-black hover:underline underline-offset-4"
+            >
+              Kembali
+            </Link>
           </div>
 
           {/* Footer Mobile Only */}

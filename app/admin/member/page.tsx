@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -160,7 +161,7 @@ export default function MemberAdmin() {
                 className="w-full bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all font-medium text-slate-700 text-sm md:text-base shadow-sm"
               />
             </div>
-            <button
+            {/* <button
               onClick={fetchMembers}
               disabled={loading}
               className="inline-flex items-center justify-center gap-2 bg-white/80 backdrop-blur-md border border-slate-200 text-slate-700 px-5 py-3 rounded-2xl font-semibold hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-sm disabled:opacity-50"
@@ -169,7 +170,7 @@ export default function MemberAdmin() {
                 className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
               />
               Refresh
-            </button>
+            </button> */}
           </div>
 
           {/* Content Card */}
@@ -250,10 +251,10 @@ export default function MemberAdmin() {
                         Jabatan
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-black text-slate-400 uppercase tracking-wider hidden lg:table-cell">
-                        Divisi
+                        Status
                       </th>
                       <th className="px-6 py-4 text-left text-xs font-black text-slate-400 uppercase tracking-wider hidden xl:table-cell">
-                        Deskripsi
+                        Sekolah
                       </th>
                       <th className="px-6 py-4 text-right text-xs font-black text-slate-400 uppercase tracking-wider">
                         Aksi
@@ -273,9 +274,9 @@ export default function MemberAdmin() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20">
+                            {/* <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20">
                               <UserCircle className="w-6 h-6 text-white" />
-                            </div>
+                            </div> */}
                             <div>
                               <p className="font-bold text-slate-800 text-sm md:text-base">
                                 {item.full_name}
