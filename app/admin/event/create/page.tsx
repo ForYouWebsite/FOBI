@@ -325,60 +325,37 @@ export default function CreateProker() {
                     <CheckCircle2 className="w-3.5 h-3.5 inline mr-1" />
                     Status Program
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      {
-                        value: "planned",
-                        label: "Planned",
-                        icon: ClipboardList,
-                        color: "border-slate-300 hover:border-blue-400",
-                      },
-                      {
-                        value: "ongoing",
-                        label: "Ongoing",
-                        icon: Loader2,
-                        color: "border-blue-300 hover:border-blue-500",
-                      },
-                      {
-                        value: "completed",
-                        label: "Completed",
-                        icon: CheckCircle2,
-                        color: "border-emerald-300 hover:border-emerald-500",
-                      },
-                      {
-                        value: "cancelled",
-                        label: "Cancelled",
-                        icon: XCircle,
-                        color: "border-red-300 hover:border-red-500",
-                      },
-                    ].map((status) => {
-                      const Icon = status.icon;
-                      const isSelected = form.status === status.value;
-                      return (
-                        <button
-                          key={status.value}
-                          type="button"
-                          onClick={() =>
-                            setForm({ ...form, status: status.value })
-                          }
-                          className={`
-            flex items-center gap-2 px-4 py-3 rounded-xl border-2 transition-all duration-200
-            ${
-              isSelected
-                ? "border-blue-500 bg-blue-50 text-blue-700 shadow-md"
-                : `${status.color} bg-white/50 text-slate-600`
-            }
-          `}
-                        >
-                          <Icon
-                            className={`w-4 h-4 ${isSelected ? "text-blue-600" : "text-slate-400"}`}
-                          />
-                          <span className="text-sm font-semibold">
-                            {status.label}
-                          </span>
-                        </button>
-                      );
-                    })}
+                  <div className="relative">
+                    <CheckCircle2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <select
+                      name="status"
+                      value={form.status}
+                      onChange={handleChange}
+                      className={`${inputBase} appearance-none cursor-pointer pr-10`}
+                    >
+                      <option value="planned">
+                        Planned - Dalam Perencanaan
+                      </option>
+                      <option value="ongoing">Ongoing - Sedang Berjalan</option>
+                      <option value="completed">Completed - Selesai</option>
+                      <option value="cancelled">Cancelled - Dibatalkan</option>
+                    </select>
+                    {/* Custom dropdown arrow */}
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-slate-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
                   </div>
                 </div>
 

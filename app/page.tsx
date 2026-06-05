@@ -197,10 +197,9 @@ const socialLinks = [
 
 const NAV_ITEMS = [
   { id: "home", label: "Home", icon: <Home className="w-4 h-4" /> },
-  { id: "about", label: "Tentang", icon: <Info className="w-4 h-4" /> },
+  { id: "about", label: "About", icon: <Info className="w-4 h-4" /> },
   { id: "shop", label: "Shop", icon: <ShoppingBag className="w-4 h-4" /> },
   { id: "event", label: "Event", icon: <Bell className="w-4 h-4" /> },
-  { id: "proker", label: "Program", icon: <BarChart3 className="w-4 h-4" /> },
 ];
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
@@ -222,7 +221,8 @@ export default function App() {
   const [loadingMembers, setLoadingMembers] = useState(true);
   const memberSliderRef = useRef<HTMLDivElement | null>(null); // Tambah ref ini
   const prokerSliderRef = useRef<HTMLDivElement | null>(null);
-
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   // Toko
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -255,14 +255,38 @@ export default function App() {
         img: item.image_url
           ? `${BACKEND_URL}${item.image_url}`
           : "https://via.placeholder.com/800x600?text=Proker",
+        status: item.status || "upcoming", // ongoing, completed, cancelled, upcoming
+        startDate: item.start_date
+          ? new Date(item.start_date).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })
+          : "-",
+        endDate: item.end_date
+          ? new Date(item.end_date).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })
+          : "-",
+        location: item.location || "HMC Event",
         color:
           item.status === "ongoing"
-            ? "bg-green-400"
+            ? "bg-green-500"
             : item.status === "completed"
-              ? "bg-blue-400"
+              ? "bg-blue-500"
               : item.status === "cancelled"
-                ? "bg-red-400"
-                : "bg-yellow-400",
+                ? "bg-red-500"
+                : "bg-yellow-500",
+        statusLabel:
+          item.status === "ongoing"
+            ? "Sedang Berlangsung"
+            : item.status === "completed"
+              ? "Selesai"
+              : item.status === "cancelled"
+                ? "Dibatalkan"
+                : "Akan Datang",
       }));
       setProkers(mapped);
     } catch (err) {
@@ -450,6 +474,29 @@ export default function App() {
       currency: "IDR",
       minimumFractionDigits: 0,
     }).format(price);
+  // ─── Event Modal ──────────────────────────────────────────────────────────
+
+  const openEventModal = (event: any) => {
+    setSelectedEvent(event);
+    setIsEventModalOpen(true);
+    document.body.style.overflow = "hidden"; // Prevent background scroll
+  };
+
+  const closeEventModal = () => {
+    setIsEventModalOpen(false);
+    setTimeout(() => setSelectedEvent(null), 300); // Clear after animation
+    document.body.style.overflow = ""; // Restore scroll
+  };
+
+  const handleRegisterEvent = () => {
+    if (!user) {
+      // If not logged in, redirect to login
+      window.location.href = "/login";
+    } else {
+      // If logged in, redirect to user registration page
+      window.location.href = `/users/pendaftaran?eventId=${selectedEvent.id}`;
+    }
+  };
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
@@ -604,7 +651,11 @@ export default function App() {
                         </p>
                       </div>
                       <a
-                        href="/user/dashboard"
+                        href={
+                          user?.role === "admin"
+                            ? "/admin/dashboard"
+                            : "/users/dashboard"
+                        }
                         onClick={() => setProfileOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                       >
@@ -1029,7 +1080,7 @@ export default function App() {
           ════════════════════════════════════════════════════════════ */}
       <section id="shop" className="py-24 bg-white overflow-hidden">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 reveal opacity-0 translate-y-[30px] transition-all duration-1000">
+          <div className="text-center mb-16 reveal opacity-0 translate-y-[30px] transition-all duration-1000">
             <div>
               <h4 className="text-blue-600 font-black uppercase tracking-widest text-xs mb-4">
                 FOBI Official Store
@@ -1038,9 +1089,9 @@ export default function App() {
                 Miliki Atribut Kebanggaan
               </h2>
             </div>
-            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
+            {/* <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
               <ShoppingBag className="w-6 h-6" />
-            </div>
+            </div> */}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {PRODUCTS.map((product, i) => (
@@ -1049,7 +1100,7 @@ export default function App() {
                 className="group reveal opacity-0 translate-y-[30px] transition-all duration-1000"
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
-                <div className="bg-slate-50 rounded-[2.5rem] p-4 border border-slate-100 transition-all hover:bg-white hover:shadow-2xl hover:shadow-blue-900/5">
+                <div className="bg-slate-50 rounded-[2.5rem] p-4 border border-slate-300 transition-all hover:bg-white hover:shadow-2xl hover:shadow-blue-900/5">
                   <div className="relative aspect-square overflow-hidden rounded-[2rem] mb-6">
                     <img
                       src={product.img}
@@ -1084,171 +1135,136 @@ export default function App() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════════════
-          EVENT — Kegiatan Sedang Dilaksanakan
-          ════════════════════════════════════════════════════════════ */}
-      <section id="event" className="py-24 bg-white border-y border-slate-100">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16 reveal opacity-0 translate-y-[30px] transition-all">
-            <div>
-              <h4 className="text-orange-500 font-black uppercase tracking-widest text-xs mb-4 flex items-center gap-2">
-                <span className="w-2 h-2 bg-orange-500 rounded-full animate-ping" />
-                LIVE SEKARANG
-              </h4>
-              <h2 className="text-4xl font-black text-slate-800">
-                Kegiatan yang sedang dilaksanakan
-              </h2>
-              <p className="text-slate-500 mt-2">
-                Jangan sampai ketinggalan, daftar sebelum kuota penuh!
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {loadingOngoing ? (
-              <>
-                <SkeletonEventCard />
-                <SkeletonEventCard />
-              </>
-            ) : ongoingProkers.length === 0 ? (
-              <div className="lg:col-span-2">
-                <EmptyState
-                  title="Tidak ada kegiatan aktif"
-                  desc="Saat ini tidak ada kegiatan yang sedang berlangsung. Pantau terus untuk info terbaru!"
-                  icon={<Calendar className="w-7 h-7" />}
-                />
-              </div>
-            ) : (
-              ongoingProkers.map((event, i) => (
-                <div
-                  key={event.id}
-                  className="bg-slate-50 rounded-[3rem] overflow-hidden border border-slate-100 flex flex-col md:flex-row reveal opacity-0 translate-y-[30px] transition-all"
-                  style={{ transitionDelay: `${i * 100}ms` }}
-                >
-                  <div className="md:w-2/5 relative h-64 md:h-auto">
-                    <img
-                      src={event.img}
-                      className="w-full h-full object-cover"
-                      alt={event.name}
-                    />
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-orange-600">
-                      {event.price}
-                    </div>
-                  </div>
-                  <div className="p-8 md:w-3/5 space-y-4">
-                    <h3 className="text-2xl font-black text-slate-800 leading-tight">
-                      {event.name}
-                    </h3>
-                    <div className="flex flex-col gap-1 text-sm text-slate-500 font-medium">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-blue-600" />{" "}
-                        {event.date}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin size={14} className="text-blue-600" />{" "}
-                        {event.location}
-                      </div>
-                    </div>
-                    <p className="text-slate-500 text-sm line-clamp-3">
-                      {event.description}
-                    </p>
-                    <a
-                      href="/login"
-                      className="inline-flex items-center gap-3 bg-blue-600 text-white px-8 py-3.5 rounded-2xl font-bold text-sm hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95"
-                    >
-                      Registration <ArrowRight size={18} />
-                    </a>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════
-          PROKER — Agenda Kerja Aktif
-          ════════════════════════════════════════════════════════════ */}
-      <section id="proker" className="py-24 bg-slate-50 overflow-hidden">
+      <section id="event" className="py-24 bg-slate-50 overflow-hidden">
         <div className="container mx-auto px-6 relative">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-            <div>
-              <h4 className="text-blue-600 font-black uppercase tracking-widest text-xs mb-4">
-                Eksplorasi Program
-              </h4>
-              <h2 className="text-4xl font-black text-slate-800">
-                Agenda Kerja Aktif Kami
-              </h2>
-            </div>
+          {/* Header */}
+          {/* Header */}
+          <div className="text-center mb-16 reveal opacity-0 translate-y-[30px] transition-all duration-1000">
+            <span className="inline-block bg-blue-100 text-blue-700 text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full mb-4">
+              Agenda & Kegiatan
+            </span>
+            <h2 className="text-4xl lg:text-5xl font-black text-slate-800 mb-4">
+              Event & Program Kerja
+            </h2>
+            <p className="text-slate-500 max-w-xl mx-auto">
+              Eksplorasi semua kegiatan FOBI, dari yang sedang berlangsung
+              hingga program kerja tahunan kami.
+            </p>
           </div>
 
+          {/* Slider Content */}
           {loadingProker ? (
             <div className="flex gap-8 overflow-x-hidden pb-8">
               {[...Array(3)].map((_, i) => (
-                <SkeletonCard key={i} />
+                <div
+                  key={i}
+                  className="min-w-full md:min-w-[400px] bg-white border border-slate-100 rounded-[3rem] p-4 animate-pulse"
+                >
+                  <div className="h-64 bg-slate-200 rounded-[2.5rem] mb-6" />
+                  <div className="px-4 space-y-3">
+                    <div className="h-6 bg-slate-200 rounded-full w-3/4" />
+                    <div className="h-4 bg-slate-200 rounded-full w-1/2" />
+                    <div className="h-20 bg-slate-200 rounded-xl w-full" />
+                  </div>
+                </div>
               ))}
             </div>
           ) : prokers.length === 0 ? (
             <EmptyState
-              title="Belum ada program kerja"
-              desc="Program kerja akan muncul di sini setelah ditambahkan oleh admin."
-              icon={<Layers className="w-7 h-7" />}
+              title="Belum ada event"
+              desc="Event dan program kerja akan muncul di sini setelah ditambahkan."
+              icon={<Calendar className="w-7 h-7" />}
             />
           ) : (
             <div className="relative group/slider">
+              {/* Navigation Buttons - Desktop */}
               <button
                 onClick={prevProker}
-                className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white shadow-xl border border-slate-100 hidden md:flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all transform hover:scale-110 active:scale-95 opacity-0 group-hover/slider:opacity-100 text-slate-700"
+                className="absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white shadow-xl border border-slate-100 hidden md:flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all transform hover:scale-110 active:scale-95 text-slate-700"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={nextProker}
-                className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white shadow-xl border border-slate-100 hidden md:flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all transform hover:scale-110 active:scale-95 opacity-0 group-hover/slider:opacity-100 text-slate-700"
+                className="absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white shadow-xl border border-slate-100 hidden md:flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all transform hover:scale-110 active:scale-95 text-slate-700"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
 
+              {/* Slider Track */}
               <div
                 ref={prokerSliderRef}
-                className="flex gap-8 overflow-x-auto snap-x snap-mandatory pb-8 px-2"
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                className="flex gap-6 lg:gap-8 overflow-x-auto snap-x snap-mandatory pb-8 px-2 scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
               >
                 {prokers.map((item, i) => (
                   <div
-                    key={i}
-                    className="min-w-full md:min-w-[400px] snap-center bg-white border border-slate-100 rounded-[3rem] p-4 group transition-all hover:shadow-2xl"
+                    key={item.id}
+                    onClick={() => openEventModal(item)}
+                    className="min-w-[85vw] md:min-w-[380px] lg:min-w-[420px] snap-center bg-white border border-slate-200 rounded-[2.5rem] p-4 group cursor-pointer transition-all hover:shadow-2xl hover:shadow-blue-900/10 hover:-translate-y-1 reveal opacity-0 translate-y-[30px] duration-700"
+                    style={{ transitionDelay: `${i * 50}ms` }}
                   >
-                    <div className="relative h-64 overflow-hidden rounded-[2.5rem] mb-6">
+                    {/* Image Container */}
+                    <div className="relative h-64 overflow-hidden rounded-[2rem] mb-5">
                       <img
                         src={item.img}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         alt={item.title}
                       />
-                      <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/30">
-                        <span className="text-[10px] font-black text-white uppercase tracking-tighter">
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+
+                      {/* Status Badge */}
+                      <div className="absolute top-4 left-4 flex items-center gap-2">
+                        <span
+                          className={`${item.color} w-2.5 h-2.5 rounded-full animate-pulse shadow-lg`}
+                        />
+                        <span className="bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-800 shadow-lg">
+                          {item.statusLabel}
+                        </span>
+                      </div>
+
+                      {/* Category Tag */}
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <span className="inline-block bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider border border-white/30">
                           {item.tag}
                         </span>
-                        <span
-                          className={`${item.color} w-2 h-2 rounded-full animate-pulse`}
-                        />
                       </div>
                     </div>
-                    <div className="px-4 pb-4">
-                      <h3 className="text-xl font-black text-slate-800 mb-3 uppercase tracking-tighter">
+
+                    {/* Content */}
+                    <div className="px-3 pb-3">
+                      <h3 className="text-xl font-black text-slate-800 mb-3 leading-tight line-clamp-2">
                         {item.title}
                       </h3>
-                      <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">
+
+                      {/* Meta Info */}
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                          <Calendar className="w-4 h-4 text-blue-600" />
+                          <span className="truncate">{item.startDate}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                          <MapPin className="w-4 h-4 text-blue-600" />
+                          <span className="truncate">{item.location}</span>
+                        </div>
+                      </div>
+
+                      {/* Description Preview */}
+                      <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-4">
                         {item.deskripsi}
                       </p>
-                      <div className="mt-6 flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-widest cursor-pointer hover:gap-3 transition-all">
-                        <Calendar className="w-4 h-4" /> Detail Kegiatan
+
+                      {/* CTA Button */}
+                      <div className="flex items-center gap-2 text-blue-600 font-bold text-xs uppercase tracking-widest group-hover:gap-3 transition-all">
+                        <span>Lihat Detail</span>
+                        <ArrowRight className="w-4 h-4" />
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
 
+              {/* Mobile Navigation Buttons */}
               <div className="flex justify-center gap-4 mt-4 md:hidden">
                 <button
                   onClick={prevProker}
@@ -1267,6 +1283,144 @@ export default function App() {
           )}
         </div>
       </section>
+
+      {/* ════════════════════════════════════════════════════════════
+          EVENT DETAIL MODAL
+          ════════════════════════════════════════════════════════════ */}
+      {isEventModalOpen && selectedEvent && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm transition-opacity"
+            onClick={closeEventModal}
+          />
+
+          {/* Modal Content */}
+          <div className="relative bg-white rounded-[2.5rem] w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+            {/* Close Button */}
+            <button
+              onClick={closeEventModal}
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-lg flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Hero Image */}
+            <div className="relative h-64 sm:h-80 overflow-hidden rounded-t-[2.5rem]">
+              <img
+                src={selectedEvent.img}
+                className="w-full h-full object-cover"
+                alt={selectedEvent.title}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+              {/* Status Badge */}
+              <div className="absolute bottom-4 left-6 right-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <span
+                    className={`${selectedEvent.color} px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest text-white shadow-lg flex items-center gap-2`}
+                  >
+                    <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                    {selectedEvent.statusLabel}
+                  </span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+                  {selectedEvent.title}
+                </h3>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 sm:p-8 space-y-6">
+              {/* Meta Info Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                  <div className="flex items-center gap-3 text-slate-600 mb-1">
+                    <Calendar className="w-5 h-5 text-blue-600" />
+                    <span className="text-xs font-bold uppercase tracking-wider">
+                      Tanggal
+                    </span>
+                  </div>
+                  <p className="text-slate-800 font-semibold">
+                    {selectedEvent.startDate}
+                  </p>
+                  {selectedEvent.endDate !== selectedEvent.startDate && (
+                    <p className="text-slate-500 text-sm">
+                      s/d {selectedEvent.endDate}
+                    </p>
+                  )}
+                </div>
+                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                  <div className="flex items-center gap-3 text-slate-600 mb-1">
+                    <MapPin className="w-5 h-5 text-blue-600" />
+                    <span className="text-xs font-bold uppercase tracking-wider">
+                      Lokasi
+                    </span>
+                  </div>
+                  <p className="text-slate-800 font-semibold">
+                    {selectedEvent.location}
+                  </p>
+                </div>
+              </div>
+
+              {/* Category */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Manajemen :
+                </span>
+                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                  {selectedEvent.tag}
+                </span>
+              </div>
+
+              {/* Description */}
+              <div>
+                <h4 className="text-lg font-black text-slate-800 mb-3">
+                  Deskripsi Kegiatan
+                </h4>
+                <p className="text-slate-600 leading-relaxed">
+                  {selectedEvent.deskripsi}
+                </p>
+              </div>
+
+              {/* Registration Button - Only show if ongoing */}
+              {selectedEvent.status === "ongoing" && (
+                <div className="pt-4 border-t border-slate-200">
+                  <button
+                    onClick={handleRegisterEvent}
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-bold text-base hover:shadow-xl hover:shadow-blue-600/30 hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-3"
+                  >
+                    <span>Daftar Sekarang</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                  <p className="text-center text-slate-500 text-xs mt-3">
+                    {!user
+                      ? "Anda harus login untuk mendaftar"
+                      : "Kuota terbatas! Daftar sebelum penuh"}
+                  </p>
+                </div>
+              )}
+
+              {/* Info for non-ongoing events */}
+              {selectedEvent.status !== "ongoing" && (
+                <div className="pt-4 border-t border-slate-200 bg-slate-50 rounded-2xl p-4 text-center">
+                  <p className="text-slate-600 text-sm">
+                    {selectedEvent.status === "completed"
+                      ? "Kegiatan ini telah selesai dilaksanakan."
+                      : selectedEvent.status === "cancelled"
+                        ? "Kegiatan ini telah dibatalkan."
+                        : "Pendaftaran akan dibuka menjelang tanggal kegiatan."}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Footer ── */}
       <footer
@@ -1299,7 +1453,7 @@ export default function App() {
                   Menu
                 </h4>
                 <ul className="space-y-4 text-sm font-medium">
-                  {["Home", "About", "Shop", "Event", "Program"].map((link) => (
+                  {["Home", "About", "Shop", "Event"].map((link) => (
                     <li key={link}>
                       <a
                         href={`#${link.toLowerCase() === "program" ? "proker" : link.toLowerCase()}`}
