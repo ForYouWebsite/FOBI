@@ -122,7 +122,7 @@ export default function App() {
             <img
               src="logo.png"
               alt="Logo"
-              className="w-16 h-16 object-contain mb-4 drop-shadow-md"
+              className="w-30 h-30 object-contain mb-4 drop-shadow-md"
             />
             <h1 className="text-2xl font-black text-slate-800 tracking-tight">
               Daftar Akun FOBI

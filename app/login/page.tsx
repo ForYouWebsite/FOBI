@@ -125,7 +125,7 @@ export default function App() {
             <img
               src="logo.png"
               alt="Logo"
-              className="w-20 h-20 object-contain mb-4 drop-shadow-md"
+              className="w-30 h-30 object-contain mb-4 drop-shadow-md"
             />
             <h1 className="text-2xl font-black text-slate-800 tracking-tight">
               Login Portal
@@ -148,7 +148,7 @@ export default function App() {
             {/* Input Email */}
             <div className="space-y-1.5 md:space-y-2">
               <label className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest ml-1">
-                Email Koordinator/Anggota
+                Email
               </label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">

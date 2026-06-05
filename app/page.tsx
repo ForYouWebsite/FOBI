@@ -14,6 +14,7 @@ import {
   LogOut,
   Target,
   ArrowRight,
+  ArrowLeft,
   MapPin,
   Mail,
   Bell,
@@ -219,8 +220,7 @@ export default function App() {
   const [loadingProker, setLoadingProker] = useState(true);
   const [members, setMembers] = useState<any[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(true);
-  const [currentMember, setCurrentMember] = useState(0);
-
+  const memberSliderRef = useRef<HTMLDivElement | null>(null); // Tambah ref ini
   const prokerSliderRef = useRef<HTMLDivElement | null>(null);
 
   // Toko
@@ -418,12 +418,16 @@ export default function App() {
     });
   };
 
-  const nextMember = () =>
-    setCurrentMember((p) => (members.length ? (p + 1) % members.length : 0));
-  const prevMember = () =>
-    setCurrentMember((p) =>
-      members.length ? (p - 1 + members.length) % members.length : 0,
-    );
+  // Hapus fungsi nextMember dan prevMember yang lama, ganti dengan ini:
+  const scrollMember = (direction: "prev" | "next") => {
+    if (!memberSliderRef.current) return;
+    // Scroll sebesar 85% lebar container untuk efek peek yang mulus
+    const scrollAmount = memberSliderRef.current.offsetWidth * 0.85;
+    memberSliderRef.current.scrollBy({
+      left: direction === "next" ? scrollAmount : -scrollAmount,
+      behavior: "smooth",
+    });
+  };
 
   // ─── Order ──────────────────────────────────────────────────────────────────
 
@@ -546,7 +550,7 @@ export default function App() {
                         setAuthMode("signin");
                         window.location.href = "/login";
                       }}
-                      className={`relative z-10 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300
+                      className={`cursor-pointer relative z-10 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300
                         ${
                           authMode === "signin"
                             ? "bg-blue-600 text-white shadow-md shadow-blue-200"
@@ -560,7 +564,7 @@ export default function App() {
                         setAuthMode("signup");
                         window.location.href = "/register";
                       }}
-                      className={`relative z-10 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300
+                      className={`cursor-pointer relative z-10 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300
                         ${
                           authMode === "signup"
                             ? "bg-blue-600 text-white shadow-md shadow-blue-200"
@@ -899,19 +903,19 @@ export default function App() {
           </div>
 
           {/* Content */}
+          {/* Content */}
           {loadingMembers ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
+            /* LOADING STATE: Horizontal Skeleton untuk mencegah Layout Shift (CLS) */
+            <div className="flex gap-6 px-6 md:px-12 py-8 overflow-hidden">
+              {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-[2rem] p-6 animate-pulse flex items-center gap-4 border border-slate-100"
+                  className="shrink-0 w-[80vw] sm:w-[350px] lg:w-[380px] bg-white rounded-[2.5rem] p-8 animate-pulse flex flex-col items-center gap-4 border border-slate-100"
                 >
-                  <div className="w-20 h-20 bg-slate-200 rounded-2xl shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-slate-200 rounded-full w-2/3" />
-                    <div className="h-3 bg-slate-200 rounded-full w-1/2" />
-                    <div className="h-3 bg-slate-200 rounded-full w-1/3" />
-                  </div>
+                  <div className="w-28 h-28 bg-slate-200 rounded-2xl" />
+                  <div className="h-5 bg-slate-200 rounded-full w-2/3" />
+                  <div className="h-4 bg-slate-200 rounded-full w-1/2" />
+                  <div className="h-3 bg-slate-200 rounded-full w-1/3" />
                 </div>
               ))}
             </div>
@@ -922,77 +926,100 @@ export default function App() {
               icon={<Users className="w-7 h-7" />}
             />
           ) : (
-            <>
-              {/* Featured card (ketua) */}
-              {members[0] && (
-                <div className="max-w-sm mx-auto mb-10 reveal opacity-0 translate-y-[30px] transition-all duration-1000">
-                  <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-8 text-white text-center shadow-2xl shadow-blue-200 relative overflow-hidden">
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
-                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 rounded-full" />
-                    <div className="relative z-10">
-                      <div className="w-24 h-24 rounded-2xl overflow-hidden mx-auto mb-4 border-4 border-white/30">
-                        <img
-                          src={
-                            members[0].photo_url
-                              ? `${FILE_URL}${members[0].photo_url}`
-                              : "/no-image.png"
-                          }
-                          className="w-full h-full object-cover"
-                          alt={members[0].full_name}
-                        />
-                      </div>
-                      <h3 className="font-black text-xl mb-1">
-                        {members[0].full_name}
-                      </h3>
-                      <span className="inline-block bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">
-                        {members[0].position}
-                      </span>
-                      {members[0].division && (
-                        <p className="text-blue-200 text-xs mt-2 font-medium">
-                          {members[0].division}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
+            /* MAIN SLIDER */
+            <div className="relative group">
+              {/* Desktop Navigation Arrows (Hidden di mobile karena user bisa swipe native) */}
+              {/* Desktop Navigation Arrows (Hidden di mobile karena user bisa swipe native) */}
+              <button
+                onClick={() => scrollMember("prev")}
+                className="hidden md:flex absolute left-0 lg:-left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white shadow-lg shadow-slate-200/50 items-center justify-center text-slate-600 hover:bg-blue-600 hover:text-white transition-all border border-slate-100"
+                aria-label="Previous member"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={() => scrollMember("next")}
+                className="hidden md:flex absolute right-0 lg:-right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white shadow-lg shadow-slate-200/50 items-center justify-center text-slate-600 hover:bg-blue-600 hover:text-white transition-all border border-slate-100"
+                aria-label="Next member"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
 
-              {/* Grid slider */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {members.slice(1).map((member, i) => (
-                  <div
-                    key={member.id ?? i}
-                    className="bg-white rounded-[2rem] p-5 border border-slate-100 flex items-center gap-4 hover:shadow-lg hover:shadow-blue-900/5 transition-all hover:-translate-y-0.5 reveal opacity-0 translate-y-[30px] duration-700"
-                    style={{ transitionDelay: `${i * 50}ms` }}
-                  >
-                    <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2 border-slate-100">
-                      <img
-                        src={
-                          member.photo_url
-                            ? `${FILE_URL}${member.photo_url}`
-                            : "/no-image.png"
-                        }
-                        className="w-full h-full object-cover"
-                        alt={member.full_name}
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <h5 className="font-black text-slate-800 text-sm leading-tight truncate">
-                        {member.full_name}
-                      </h5>
-                      <p className="text-xs font-bold text-blue-600 uppercase tracking-tight mt-0.5 truncate">
-                        {member.position}
-                      </p>
-                      {member.division && (
-                        <p className="text-xs text-slate-400 mt-0.5 truncate">
-                          {member.division}
-                        </p>
+              {/* Slider Track */}
+              <div
+                ref={memberSliderRef}
+                className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 md:px-12 py-8 scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+              >
+                {members.map((member, i) => {
+                  const isKetua = i === 0;
+                  return (
+                    <div
+                      key={member.id ?? i}
+                      className="snap-center shrink-0 w-[50vw] sm:w-[250px] lg:w-[280px] reveal opacity-0 translate-y-[30px] transition-all duration-700"
+                      style={{ transitionDelay: `${i * 50}ms` }}
+                    >
+                      {isKetua ? (
+                        /* Featured Card untuk Ketua */
+                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-8 text-white text-center shadow-2xl shadow-blue-200/50 relative overflow-hidden h-full flex flex-col items-center justify-center">
+                          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full" />
+                          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 rounded-full" />
+                          <div className="relative z-10 w-full">
+                            <div className="w-28 h-28 rounded-2xl overflow-hidden mx-auto mb-5 border-4 border-white/30 shadow-xl">
+                              <img
+                                src={
+                                  member.photo_url
+                                    ? `${FILE_URL}${member.photo_url}`
+                                    : "/no-image.png"
+                                }
+                                className="w-full h-full object-cover"
+                                alt={member.full_name}
+                              />
+                            </div>
+                            <h3 className="font-black text-2xl mb-2 leading-tight">
+                              {member.full_name}
+                            </h3>
+                            <span className="inline-block bg-white/20 backdrop-blur-sm px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-2">
+                              {member.position}
+                            </span>
+                            {member.division && (
+                              <p className="text-blue-100 text-sm mt-2 font-medium">
+                                {member.division}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        /* Regular Card untuk Anggota Lain (Layout Vertikal agar lebih elegan di slider) */
+                        <div className="bg-white rounded-[2.5rem] p-8 border border-slate-300 flex flex-col items-center text-center hover:shadow-xl hover:shadow-blue-900/5 transition-all hover:-translate-y-1 h-full">
+                          <div className="w-24 h-24 rounded-2xl overflow-hidden mb-4 border-4 border-slate-50 shadow-md">
+                            <img
+                              src={
+                                member.photo_url
+                                  ? `${FILE_URL}${member.photo_url}`
+                                  : "/no-image.png"
+                              }
+                              className="w-full h-full object-cover"
+                              alt={member.full_name}
+                            />
+                          </div>
+                          <h5 className="font-black text-slate-800 text-lg leading-tight mb-1">
+                            {member.full_name}
+                          </h5>
+                          <p className="text-sm font-bold text-blue-600 uppercase tracking-tight">
+                            {member.position}
+                          </p>
+                          {member.division && (
+                            <p className="text-xs text-slate-400 mt-1 font-medium">
+                              {member.division}
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            </>
+            </div>
           )}
         </div>
       </section>
