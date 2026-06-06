@@ -177,7 +177,7 @@ export default function App() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="contoh@email.com"
+                  placeholder="contoh@gmail.com"
                   className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 md:py-4 pl-12 pr-4 outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all font-medium text-slate-700 text-sm md:text-base"
                   required
                 />

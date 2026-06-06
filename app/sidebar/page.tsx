@@ -378,7 +378,7 @@ export default function SideBar({ onToggle }: SideBarProps) {
                 className="space-y-2"
               >
                 {user && (
-                  <div className="flex items-center gap-3 p-3 bg-slate-100/60 rounded-2xl">
+                  <div className="flex text-center items-center gap-3 p-3 bg-slate-100/60 rounded-2xl">
                     <div className="flex-1 min-w-0 overflow-hidden">
                       <p className="text-xs font-bold text-slate-800 truncate">
                         {user.full_name || "User"}
@@ -392,7 +392,7 @@ export default function SideBar({ onToggle }: SideBarProps) {
 
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-400 hover:bg-red-50 transition-all"
+                  className="w-full flex text-center justify-center items-center gap-4 px-4 py-3 rounded-xl text-red-400 hover:bg-red-50 transition-all"
                 >
                   <LogOut size={18} className="flex-shrink-0" />
                   <span className="text-xs font-bold uppercase">Logout</span>

@@ -2,6 +2,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import "./globals.css";
+
 import {
   Home,
   Info,
@@ -199,7 +201,7 @@ const NAV_ITEMS = [
   { id: "home", label: "Home", icon: <Home className="w-4 h-4" /> },
   { id: "about", label: "About", icon: <Info className="w-4 h-4" /> },
   { id: "shop", label: "Shop", icon: <ShoppingBag className="w-4 h-4" /> },
-  { id: "event", label: "Event", icon: <Bell className="w-4 h-4" /> },
+  { id: "event", label: "Event", icon: <Calendar className="w-4 h-4" /> },
 ];
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
@@ -521,27 +523,15 @@ export default function App() {
       <header className="fixed w-full z-50 hidden lg:block">
         {/* Scroll progress bar */}
         <div
-          className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-100 z-10"
+          className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-blue-500 to-indigo-500 z-10"
           style={{ width: `${scrollProgress * 100}%` }}
         />
 
-        <div
-          className={`mx-auto transition-all duration-500 ease-out will-change-transform
-          ${scrolled ? "mt-3 max-w-5xl px-2" : "mt-0 max-w-full px-0"}`}
-        >
-          <div
-            className={`flex justify-between items-center transition-all duration-500 ease-out will-change-transform
-              ${
-                scrolled
-                  ? "bg-white/95 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-2xl border border-white/60 px-8 py-3"
-                  : "bg-white/80 backdrop-blur-lg border-b border-white/40 px-12 py-4 shadow-sm"
-              }`}
-          >
+        <div className="mx-auto mt-3 max-w-5xl px-2">
+          <div className="flex justify-between items-center bg-white/95 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] rounded-2xl border border-white/60 px-8 py-3">
             {/* Logo */}
             <a href="#home" className="flex items-center gap-3 shrink-0">
-              <div
-                className={`transition-all duration-500 ${scrolled ? "w-8 h-8" : "w-10 h-10"}`}
-              >
+              <div className="w-8 h-8">
                 <img
                   src="logo.png"
                   alt="FOBI"
@@ -549,9 +539,7 @@ export default function App() {
                 />
               </div>
               <div className="leading-none">
-                <span
-                  className={`font-black text-slate-800 block tracking-tighter transition-all duration-500 ${scrolled ? "text-lg" : "text-xl"}`}
-                >
+                <span className="font-black text-slate-800 block tracking-tighter text-lg">
                   FOBI
                 </span>
                 <span className="text-[9px] text-blue-500 font-bold uppercase tracking-[0.15em]">
@@ -574,11 +562,11 @@ export default function App() {
                     href={`#${item.id}`}
                     onClick={() => setActiveTab(item.id)}
                     className={`relative px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200
-                      ${
-                        isActive
-                          ? "bg-white text-blue-600 shadow-sm shadow-blue-100"
-                          : "text-slate-500 hover:text-slate-800"
-                      }`}
+                ${
+                  isActive
+                    ? "bg-white text-blue-600 shadow-sm shadow-blue-100"
+                    : "text-slate-500 hover:text-slate-800"
+                }`}
                   >
                     {item.label}
                   </a>
@@ -590,7 +578,6 @@ export default function App() {
             <div className="relative shrink-0" data-profile>
               {!user ? (
                 <div className="flex items-center gap-2 bg-slate-100 rounded-2xl p-1.5">
-                  {/* Sliding pill indicator */}
                   <div className="relative flex gap-1">
                     <button
                       onClick={() => {
@@ -598,11 +585,11 @@ export default function App() {
                         window.location.href = "/login";
                       }}
                       className={`cursor-pointer relative z-10 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300
-                        ${
-                          authMode === "signin"
-                            ? "bg-blue-600 text-white shadow-md shadow-blue-200"
-                            : "text-slate-500 hover:text-slate-700"
-                        }`}
+                  ${
+                    authMode === "signin"
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
                     >
                       Sign In
                     </button>
@@ -612,11 +599,11 @@ export default function App() {
                         window.location.href = "/register";
                       }}
                       className={`cursor-pointer relative z-10 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-300
-                        ${
-                          authMode === "signup"
-                            ? "bg-blue-600 text-white shadow-md shadow-blue-200"
-                            : "text-slate-500 hover:text-slate-700"
-                        }`}
+                  ${
+                    authMode === "signup"
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
                     >
                       Sign Up
                     </button>
@@ -942,15 +929,15 @@ export default function App() {
           {/* Header */}
           <div className="text-center mb-16 reveal opacity-0 translate-y-[30px] transition-all duration-1000">
             <span className="inline-block bg-blue-100 text-blue-700 text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full mb-4">
-              Kepengurusan Aktif
+              Kepengurusan
             </span>
             <h2 className="text-4xl lg:text-5xl font-black text-slate-800 mb-4">
               Struktur Organisasi
             </h2>
-            <p className="text-slate-500 max-w-xl mx-auto">
+            {/* <p className="text-slate-500 max-w-xl mx-auto">
               Dikelola oleh pelajar terbaik dari berbagai sekolah di Kota
               Banjar.
-            </p>
+            </p> */}
           </div>
 
           {/* Content */}
@@ -1146,10 +1133,10 @@ export default function App() {
             <h2 className="text-4xl lg:text-5xl font-black text-slate-800 mb-4">
               Event & Program Kerja
             </h2>
-            <p className="text-slate-500 max-w-xl mx-auto">
+            {/* <p className="text-slate-500 max-w-xl mx-auto">
               Eksplorasi semua kegiatan FOBI, dari yang sedang berlangsung
               hingga program kerja tahunan kami.
-            </p>
+            </p> */}
           </div>
 
           {/* Slider Content */}

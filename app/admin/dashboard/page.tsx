@@ -19,6 +19,9 @@ import {
   AlertCircle,
   BarChart3,
   PieChart,
+  CalendarDays,
+  CalendarRange,
+  CalendarClock,
 } from "lucide-react";
 
 type StatCard = {
@@ -38,9 +41,11 @@ type RecentActivity = {
 };
 
 type ChartData = {
-  month: string;
+  label: string;
   value: number;
 };
+
+type FilterPeriod = "weekly" | "monthly" | "yearly";
 
 export default function DashboardAdmin() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -57,6 +62,38 @@ export default function DashboardAdmin() {
   const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterPeriod, setFilterPeriod] = useState<FilterPeriod>("monthly");
+
+  // Dummy data untuk setiap periode
+  const chartDataByPeriod: Record<FilterPeriod, ChartData[]> = {
+    weekly: [
+      { label: "Minggu 1", value: 25 },
+      { label: "Minggu 2", value: 32 },
+      { label: "Minggu 3", value: 28 },
+      { label: "Minggu 4", value: 41 },
+    ],
+    monthly: [
+      { label: "Jan", value: 65 },
+      { label: "Feb", value: 78 },
+      { label: "Mar", value: 90 },
+      { label: "Apr", value: 81 },
+      { label: "Mei", value: 95 },
+      { label: "Jun", value: 110 },
+    ],
+    yearly: [
+      { label: "2021", value: 320 },
+      { label: "2022", value: 485 },
+      { label: "2023", value: 720 },
+      { label: "2024", value: 950 },
+      { label: "2025", value: 1240 },
+    ],
+  };
+
+  const periodLabels: Record<FilterPeriod, string> = {
+    weekly: "4 minggu terakhir",
+    monthly: "6 bulan terakhir",
+    yearly: "5 tahun terakhir",
+  };
 
   useEffect(() => {
     // Simulate API call
@@ -130,18 +167,20 @@ export default function DashboardAdmin() {
         },
       ]);
 
-      setChartData([
-        { month: "Jan", value: 65 },
-        { month: "Feb", value: 78 },
-        { month: "Mar", value: 90 },
-        { month: "Apr", value: 81 },
-        { month: "Mei", value: 95 },
-        { month: "Jun", value: 110 },
-      ]);
-
+      setChartData(chartDataByPeriod[filterPeriod]);
       setLoading(false);
     }, 800);
   }, []);
+
+  // Update chart data saat filter berubah
+  useEffect(() => {
+    if (!loading) {
+      setChartData(chartDataByPeriod[filterPeriod]);
+    }
+  }, [filterPeriod]);
+
+  // Hitung max value untuk scaling chart
+  const maxChartValue = Math.max(...chartData.map((d) => d.value), 1);
 
   const getColorClasses = (color: string) => {
     const colors: Record<
@@ -184,6 +223,12 @@ export default function DashboardAdmin() {
         return <Activity className="w-5 h-5 text-slate-400" />;
     }
   };
+
+  const filterButtons = [
+    { id: "weekly" as FilterPeriod, label: "Minggu", icon: CalendarClock },
+    { id: "monthly" as FilterPeriod, label: "Bulan", icon: CalendarDays },
+    { id: "yearly" as FilterPeriod, label: "Tahun", icon: CalendarRange },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
@@ -291,18 +336,36 @@ export default function DashboardAdmin() {
               transition={{ delay: 0.4 }}
               className="lg:col-span-2 bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-xl shadow-slate-200/50"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-slate-800 mb-1">
                     Data Anggota
                   </h3>
-                  <p className="text-sm text-slate-500">6 bulan terakhir</p>
+                  <p className="text-sm text-slate-500">
+                    {periodLabels[filterPeriod]}
+                  </p>
                 </div>
-                <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-xl">
-                  <PieChart className="w-4 h-4 text-slate-600" />
-                  <span className="text-xs font-semibold text-slate-600">
-                    +68.5%
-                  </span>
+
+                {/* Filter Buttons */}
+                <div className="inline-flex items-center gap-1 bg-slate-100/80 backdrop-blur-md p-1 rounded-xl border border-slate-200/60">
+                  {filterButtons.map((btn) => {
+                    const Icon = btn.icon;
+                    const isActive = filterPeriod === btn.id;
+                    return (
+                      <button
+                        key={btn.id}
+                        onClick={() => setFilterPeriod(btn.id)}
+                        className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
+                          isActive
+                            ? "bg-white text-blue-600 shadow-sm"
+                            : "text-slate-500 hover:text-slate-700"
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        <span>{btn.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -313,23 +376,30 @@ export default function DashboardAdmin() {
                         key={i}
                         className="flex-1 bg-slate-200 rounded-t-xl animate-pulse"
                         style={{
-                          height: `${skeletonHeights[i]}%`,
+                          height: `${skeletonHeights[i] || 50}%`,
                         }}
                       />
                     ))
                   : chartData.map((data, index) => (
                       <motion.div
-                        key={data.month}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${(data.value / 120) * 100}%` }}
-                        transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
+                        key={`${filterPeriod}-${data.label}`}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{
+                          height: `${(data.value / maxChartValue) * 100}%`,
+                          opacity: 1,
+                        }}
+                        transition={{
+                          delay: index * 0.08,
+                          duration: 0.5,
+                          ease: "easeOut",
+                        }}
                         className="flex-1 bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl relative group hover:from-blue-700 hover:to-blue-500 transition-all cursor-pointer"
                       >
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                           {data.value} anggota
                         </div>
-                        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-semibold text-slate-500">
-                          {data.month}
+                        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-semibold text-slate-500 whitespace-nowrap">
+                          {data.label}
                         </div>
                       </motion.div>
                     ))}
