@@ -37,6 +37,13 @@ export default function ProkerAdmin() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebar-state");
+
+    if (saved !== null) {
+      setSidebarOpen(JSON.parse(saved));
+    }
+  }, []);
   const getToken = () => {
     const raw =
       localStorage.getItem("token") || sessionStorage.getItem("token");

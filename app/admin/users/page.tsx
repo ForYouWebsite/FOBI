@@ -133,14 +133,14 @@ export default function MemberAdmin() {
                   </span>
                 </div>
                 <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">
-                  Data Pengurus
+                  Data Users
                 </h1>
                 <p className="text-slate-500 font-medium text-sm md:text-base">
                   Kelola informasi anggota dan struktur organisasi dengan mudah
                 </p>
               </div>
 
-              <Link href="/admin/member/create">
+              <Link href="/admin/users/create">
                 <button className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-5 py-3 rounded-2xl font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300 active:scale-[0.98] text-sm md:text-base">
                   <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform" />
                   Tambah Data
@@ -228,7 +228,7 @@ export default function MemberAdmin() {
                       : "Mulai tambahkan data anggota untuk mengelola struktur organisasi Anda."}
                   </p>
                   {!searchQuery && (
-                    <Link href="/admin/member/create">
+                    <Link href="/admin/users/create">
                       <button className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-blue-500/25 hover:shadow-xl transition-all">
                         <Plus className="w-4 h-4" />
                         Tambah Anggota Pertama
@@ -313,7 +313,7 @@ export default function MemberAdmin() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end gap-2">
-                            <Link href={`/admin/member/edit/${item.id}`}>
+                            <Link href={`/admin/users/edit/${item.id}`}>
                               <button
                                 className="group inline-flex items-center justify-center w-9 h-9 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-xl transition-all duration-200 shadow-sm hover:shadow"
                                 title="Edit"

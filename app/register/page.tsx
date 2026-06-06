@@ -258,12 +258,12 @@ export default function App() {
                 Masuk ke Portal
               </a>
             </p>
-            <Link
+            {/* <Link
               href="/"
               className="text-red-600 font-black hover:underline underline-offset-4"
             >
               Kembali
-            </Link>
+            </Link> */}
           </div>
 
           {/* Footer Mobile Only */}
