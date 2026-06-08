@@ -14,11 +14,14 @@ import {
   Calendar,
   CreditCard,
   UserCog,
+  ShoppingBag,
   BarChart3,
   FolderOpen,
   CalendarCheck,
   Network,
   ChevronRight,
+  List,
+  LayoutList,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -84,8 +87,14 @@ export default function SideBar({ onToggle }: SideBarProps) {
           path: "/admin/kta",
         },
         {
+          id: "shop",
+          label: "Product",
+          icon: ShoppingBag,
+          path: "/admin/shop",
+        },
+        {
           id: "laporan",
-          label: "Laporan & Analitik",
+          label: "Laporan Penjualan",
           icon: BarChart3,
           path: "/admin/laporan",
         },
@@ -107,29 +116,17 @@ export default function SideBar({ onToggle }: SideBarProps) {
           path: "/pengurus/dashboard",
         },
         {
-          id: "kta",
-          label: "KTA Digital",
+          id: "profile",
+          label: "Profil Saya",
+          icon: UserCog,
+          path: "/user/profile",
+        }, // ✅ GANTI dari "Informasi Data"
+        {
+          id: "kartu-pengurus",
+          label: "Kartu Pengurus",
           icon: CreditCard,
-          path: "/pengurus/kta",
-        },
-        {
-          id: "kegiatan",
-          label: "Manajemen Kegiatan",
-          icon: CalendarCheck,
-          path: "/pengurus/kegiatan",
-        },
-        {
-          id: "anggota",
-          label: "Data Anggota",
-          icon: Users,
-          path: "/pengurus/anggota",
-        },
-        {
-          id: "arsip",
-          label: "Arsip Dokumen",
-          icon: FolderOpen,
-          path: "/pengurus/arsip",
-        },
+          path: "/pengurus/kartu",
+        }, // ✅ REVISI
         {
           id: "settings",
           label: "Pengaturan",
@@ -146,24 +143,23 @@ export default function SideBar({ onToggle }: SideBarProps) {
         icon: Home,
         path: "/user/dashboard",
       },
-      { id: "kta", label: "KTA Saya", icon: CreditCard, path: "/user/kta" },
       {
-        id: "profil",
+        id: "profile",
         label: "Profil Saya",
         icon: UserCog,
-        path: "/user/profil",
+        path: "/user/profile",
+      }, // ✅ GANTI dari "Informasi Data"
+      {
+        id: "daftar",
+        label: "Daftar Pengurus",
+        icon: LayoutList,
+        path: "/user/daftar",
       },
       {
         id: "events",
         label: "Event & Kegiatan",
         icon: Calendar,
         path: "/user/events",
-      },
-      {
-        id: "struktur",
-        label: "Struktur Pengurus",
-        icon: Network,
-        path: "/user/struktur",
       },
       {
         id: "settings",
@@ -222,6 +218,8 @@ export default function SideBar({ onToggle }: SideBarProps) {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.clear(); // kalau ada data di localStorage
+
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
     toast.success("Berhasil keluar!");

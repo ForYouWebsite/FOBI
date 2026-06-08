@@ -245,58 +245,58 @@ export default function App() {
 
   // ─── Data Fetching ──────────────────────────────────────────────────────────
 
-  const fetchProkers = async () => {
-    try {
-      setLoadingProker(true);
-      const res = await API.get("/proker");
-      const mapped = res.data.data.map((item: any) => ({
-        id: item.id,
-        title: item.title,
-        deskripsi: item.description,
-        tag: item.category || "Program",
-        img: item.image_url
-          ? `${BACKEND_URL}${item.image_url}`
-          : "https://via.placeholder.com/800x600?text=Proker",
-        status: item.status || "upcoming", // ongoing, completed, cancelled, upcoming
-        startDate: item.start_date
-          ? new Date(item.start_date).toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })
-          : "-",
-        endDate: item.end_date
-          ? new Date(item.end_date).toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })
-          : "-",
-        location: item.location || "HMC Event",
-        color:
-          item.status === "ongoing"
-            ? "bg-green-500"
-            : item.status === "completed"
-              ? "bg-blue-500"
-              : item.status === "cancelled"
-                ? "bg-red-500"
-                : "bg-yellow-500",
-        statusLabel:
-          item.status === "ongoing"
-            ? "Sedang Berlangsung"
-            : item.status === "completed"
-              ? "Selesai"
-              : item.status === "cancelled"
-                ? "Dibatalkan"
-                : "Akan Datang",
-      }));
-      setProkers(mapped);
-    } catch (err) {
-      console.error("Fetch proker error:", err);
-    } finally {
-      setLoadingProker(false);
-    }
-  };
+  // const fetchProkers = async () => {
+  //   try {
+  //     setLoadingProker(true);
+  //     const res = await API.get("/proker");
+  //     const mapped = res.data.data.map((item: any) => ({
+  //       id: item.id,
+  //       title: item.title,
+  //       deskripsi: item.description,
+  //       tag: item.category || "Program",
+  //       img: item.image_url
+  //         ? `${BACKEND_URL}${item.image_url}`
+  //         : "https://via.placeholder.com/800x600?text=Proker",
+  //       status: item.status || "upcoming", // ongoing, completed, cancelled, upcoming
+  //       startDate: item.start_date
+  //         ? new Date(item.start_date).toLocaleDateString("id-ID", {
+  //             day: "numeric",
+  //             month: "long",
+  //             year: "numeric",
+  //           })
+  //         : "-",
+  //       endDate: item.end_date
+  //         ? new Date(item.end_date).toLocaleDateString("id-ID", {
+  //             day: "numeric",
+  //             month: "long",
+  //             year: "numeric",
+  //           })
+  //         : "-",
+  //       location: item.location || "HMC Event",
+  //       color:
+  //         item.status === "ongoing"
+  //           ? "bg-green-500"
+  //           : item.status === "completed"
+  //             ? "bg-blue-500"
+  //             : item.status === "cancelled"
+  //               ? "bg-red-500"
+  //               : "bg-yellow-500",
+  //       statusLabel:
+  //         item.status === "ongoing"
+  //           ? "Sedang Berlangsung"
+  //           : item.status === "completed"
+  //             ? "Selesai"
+  //             : item.status === "cancelled"
+  //               ? "Dibatalkan"
+  //               : "Akan Datang",
+  //     }));
+  //     setProkers(mapped);
+  //   } catch (err) {
+  //     console.error("Fetch proker error:", err);
+  //   } finally {
+  //     setLoadingProker(false);
+  //   }
+  // };
 
   const fetchMembers = async () => {
     try {
@@ -313,34 +313,34 @@ export default function App() {
     }
   };
 
-  const fetchOngoingProkers = async () => {
-    try {
-      setLoadingOngoing(true);
-      const res = await API.get("/proker?status=ongoing");
-      const mapped = res.data.data.map((item: any) => ({
-        id: item.id,
-        name: item.title,
-        description: item.description,
-        img: item.image_url
-          ? `${BACKEND_URL}${item.image_url}`
-          : "https://via.placeholder.com/800x600?text=Proker",
-        price: item.category || "Program",
-        date: item.start_date
-          ? new Date(item.start_date).toLocaleDateString("id-ID")
-          : "-",
-        location: "HMC Event",
-      }));
-      setOngoingProkers(mapped);
-    } catch (err) {
-      console.error("Fetch ongoing error:", err);
-    } finally {
-      setLoadingOngoing(false);
-    }
-  };
+  // const fetchOngoingProkers = async () => {
+  //   try {
+  //     setLoadingOngoing(true);
+  //     const res = await API.get("/proker?status=ongoing");
+  //     const mapped = res.data.data.map((item: any) => ({
+  //       id: item.id,
+  //       name: item.title,
+  //       description: item.description,
+  //       img: item.image_url
+  //         ? `${BACKEND_URL}${item.image_url}`
+  //         : "https://via.placeholder.com/800x600?text=Proker",
+  //       price: item.category || "Program",
+  //       date: item.start_date
+  //         ? new Date(item.start_date).toLocaleDateString("id-ID")
+  //         : "-",
+  //       location: "HMC Event",
+  //     }));
+  //     setOngoingProkers(mapped);
+  //   } catch (err) {
+  //     console.error("Fetch ongoing error:", err);
+  //   } finally {
+  //     setLoadingOngoing(false);
+  //   }
+  // };
 
   useEffect(() => {
-    fetchProkers();
-    fetchOngoingProkers();
+    // fetchProkers();
+    // fetchOngoingProkers();
     fetchMembers();
   }, []);
 

@@ -41,9 +41,17 @@ export default function MemberAdmin() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // State untuk sinkronisasi posisi sidebar
+  /* eslint-disable react-hooks/set-state-in-effect */
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebar-state");
+
+    if (saved !== null) {
+      setSidebarOpen(JSON.parse(saved));
+    }
+  }, []);
   const getToken = () => {
     const raw =
       localStorage.getItem("token") || sessionStorage.getItem("token");

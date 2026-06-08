@@ -29,7 +29,17 @@ type KTA = {
 };
 
 export default function KTAAdmin() {
+  /* eslint-disable react-hooks/set-state-in-effect */
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebar-state");
+
+    if (saved !== null) {
+      setSidebarOpen(JSON.parse(saved));
+    }
+  }, []);
   const [ktaList, setKtaList] = useState<KTA[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
