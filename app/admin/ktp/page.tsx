@@ -19,16 +19,16 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-type KTA = {
+type KTP = {
   id: number;
   memberName: string;
-  ktaNumber: string;
+  ktpnumber: string;
   issueDate: string;
   expiryDate: string;
   status: "active" | "expired" | "pending";
 };
 
-export default function KTAAdmin() {
+export default function KTPAdmin() {
   /* eslint-disable react-hooks/set-state-in-effect */
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -40,31 +40,31 @@ export default function KTAAdmin() {
       setSidebarOpen(JSON.parse(saved));
     }
   }, []);
-  const [ktaList, setKtaList] = useState<KTA[]>([]);
+  const [ktpList, setKtpList] = useState<KTP[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortField, setSortField] = useState<keyof KTA>("memberName");
+  const [sortField, setSortField] = useState<keyof KTP>("memberName");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const itemsPerPage = 10;
 
   useEffect(() => {
     setTimeout(() => {
-      const dummyData: KTA[] = Array.from({ length: 25 }, (_, i) => ({
+      const dummyData: KTP[] = Array.from({ length: 25 }, (_, i) => ({
         id: i + 1,
         memberName: `Anggota ${i + 1}`,
-        ktaNumber: `KTA-${String(2024000 + i).padStart(7, "0")}`,
+        ktpnumber: `KTP-${String(2024000 + i).padStart(7, "0")}`,
         issueDate: new Date(2024, 0, 1 + i).toISOString().split("T")[0],
         expiryDate: new Date(2025, 0, 1 + i).toISOString().split("T")[0],
         status: i % 3 === 0 ? "pending" : i % 5 === 0 ? "expired" : "active",
       }));
-      setKtaList(dummyData);
+      setKtpList(dummyData);
       setLoading(false);
     }, 800);
   }, []);
 
-  const handleSort = (field: keyof KTA) => {
+  const handleSort = (field: keyof KTP) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -95,20 +95,20 @@ export default function KTAAdmin() {
       return;
     }
     if (!confirm(`Yakin ingin menghapus ${selectedIds.length} data?`)) return;
-    setKtaList(ktaList.filter((item) => !selectedIds.includes(item.id)));
+    setKtpList(ktpList.filter((item) => !selectedIds.includes(item.id)));
     setSelectedIds([]);
     toast.success(`${selectedIds.length} data berhasil dihapus`);
   };
 
   const handleDelete = (id: number) => {
     if (!confirm("Yakin ingin menghapus data ini?")) return;
-    setKtaList(ktaList.filter((item) => item.id !== id));
+    setKtpList(ktpList.filter((item) => item.id !== id));
     toast.success("Data berhasil dihapus");
   };
 
-  const filteredData = ktaList
+  const filteredData = ktpList
     .filter((item) =>
-      `${item.memberName} ${item.ktaNumber}`
+      `${item.memberName} ${item.ktpnumber}`
         .toLowerCase()
         .includes(searchQuery.toLowerCase()),
     )
@@ -167,21 +167,24 @@ export default function KTAAdmin() {
                 <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200/60 shadow-sm">
                   <CreditCard className="w-4 h-4 text-blue-600" />
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                    Manajemen KTA
+                    Manajemen KTP
                   </span>
                 </div>
                 <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">
-                  Kartu Tanda Anggota
+                  Kartu Tanda Pengurus
                 </h1>
                 <p className="text-slate-500 font-medium text-sm md:text-base">
-                  Kelola dan terbitkan KTA untuk seluruh anggota
+                  Kelola dan Design KTP untuk seluruh anggota
                 </p>
               </div>
 
-              <button className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-5 py-3 rounded-2xl font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300 active:scale-[0.98] text-sm md:text-base">
-                <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform" />
-                Terbitkan KTA
-              </button>
+              <a
+                href="/admin/ktp/design"
+                className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-5 py-3 rounded-2xl font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300 active:scale-[0.98] text-sm md:text-base"
+              >
+                {/* <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform" /> */}
+                Design KTP
+              </a>
             </div>
           </motion.div>
 
@@ -195,7 +198,7 @@ export default function KTAAdmin() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Cari nama anggota atau nomor KTA..."
+                placeholder="Cari nama anggota atau nomor KTP..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -229,7 +232,7 @@ export default function KTAAdmin() {
                 <p className="text-sm font-semibold text-slate-600">
                   Total:{" "}
                   <span className="text-blue-600">{filteredData.length}</span>{" "}
-                  KTA
+                  KTP
                 </p>
                 <div className="flex items-center gap-2 text-xs text-slate-400">
                   <CheckCircle className="w-4 h-4 text-emerald-500" />
@@ -263,12 +266,12 @@ export default function KTAAdmin() {
                   <h3 className="text-lg font-bold text-slate-700 mb-2">
                     {searchQuery
                       ? "Tidak ada hasil ditemukan"
-                      : "Belum ada data KTA"}
+                      : "Belum ada data KTP"}
                   </h3>
                   <p className="text-slate-500 text-sm mb-6 max-w-md mx-auto">
                     {searchQuery
                       ? "Coba gunakan kata kunci lain untuk menemukan data yang Anda cari."
-                      : "Mulai terbitkan KTA untuk anggota organisasi Anda."}
+                      : "Mulai Design KTP untuk anggota organisasi Anda."}
                   </p>
                 </div>
               ) : (
@@ -296,11 +299,11 @@ export default function KTAAdmin() {
                         </div>
                       </th>
                       <th
-                        onClick={() => handleSort("ktaNumber")}
+                        onClick={() => handleSort("ktpnumber")}
                         className="px-6 py-4 text-left text-xs font-black text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-600 transition-colors"
                       >
                         <div className="flex items-center gap-2">
-                          Nomor KTA
+                          Nomor KTP
                           <ArrowUpDown className="w-3 h-3" />
                         </div>
                       </th>
@@ -353,7 +356,7 @@ export default function KTAAdmin() {
                         </td>
                         <td className="px-6 py-4">
                           <p className="font-mono text-sm text-slate-700 font-semibold">
-                            {item.ktaNumber}
+                            {item.ktpnumber}
                           </p>
                         </td>
                         <td className="px-6 py-4">

@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-type Division = {
+type Manajemenon = {
   id: string;
   name: string;
   icon: any;
@@ -35,7 +35,7 @@ export default function UserDaftarPengurus() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [selectedDivision, setSelectedDivision] = useState<string>("");
+  const [selectedManajemenon, setSelectedManajemenon] = useState<string>("");
   const [agreeTerms, setAgreeTerms] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -54,43 +54,33 @@ export default function UserDaftarPengurus() {
     }
   }, []);
 
-  // Dummy Data Divisi
-  const divisions: Division[] = [
+  // Dummy Data Manajemen
+  const Manajemenons: Manajemenon[] = [
     {
-      id: "kepemimpinan",
-      name: "Kepemimpinan",
+      id: "Learning Center",
+      name: "Learning Center",
       icon: Trophy,
       description: "Mengarahkan visi dan strategi organisasi",
     },
+
     {
-      id: "pendidikan",
-      name: "Pendidikan",
-      icon: School,
-      description: "Mengembangkan akademik dan pelatihan anggota",
-    },
-    {
-      id: "humas",
-      name: "Humas & Media",
+      id: "media",
+      name: "Media Center",
       icon: Users,
       description: "Mengelola hubungan eksternal dan publikasi",
     },
-    {
-      id: "olahraga",
-      name: "Olahraga",
-      icon: Star,
-      description: "Mengkoordinir kegiatan fisik dan kompetisi",
-    },
+
     {
       id: "sosial",
-      name: "Sosial",
+      name: "Sosial Center",
       icon: HeartIcon,
       description: "Menggerakkan kegiatan bakti sosial",
     },
     {
-      id: "kewirausahaan",
-      name: "Kewirausahaan",
+      id: "businees",
+      name: "Businees Center",
       icon: Briefcase,
-      description: "Mengelola bisnis dan dana organisasi",
+      description: "Mengelola bisnis",
     },
   ];
 
@@ -104,8 +94,8 @@ export default function UserDaftarPengurus() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedDivision) {
-      toast.error("Silakan pilih divisi yang diminati!");
+    if (!selectedManajemenon) {
+      toast.error("Silakan pilih Manajemen yang diminati!");
       return;
     }
     if (!agreeTerms) {
@@ -132,7 +122,7 @@ export default function UserDaftarPengurus() {
       experience: "",
       motivation: "",
     });
-    setSelectedDivision("");
+    setSelectedManajemenon("");
     setAgreeTerms(false);
     setShowSuccessModal(false);
   };
@@ -233,16 +223,16 @@ export default function UserDaftarPengurus() {
                     {/* No HP */}
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-2">
-                        No. WhatsApp <span className="text-red-500">*</span>
+                        Sekolah <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                        <School className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                         <input
-                          type="tel"
-                          name="phone"
+                          type="sekolah"
+                          name="sekolah"
                           value={formData.phone}
                           onChange={handleChange}
-                          placeholder="081234567890"
+                          placeholder="Contoh : SMKN 1 Banjar"
                           required
                           className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all text-sm"
                         />
@@ -252,7 +242,7 @@ export default function UserDaftarPengurus() {
                     {/* Kelas */}
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-2">
-                        Kelas / Jurusan <span className="text-red-500">*</span>
+                        Kelas <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <School className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -261,7 +251,7 @@ export default function UserDaftarPengurus() {
                           name="class"
                           value={formData.class}
                           onChange={handleChange}
-                          placeholder="Contoh: XII IPA 1"
+                          placeholder="Contoh: XII"
                           required
                           className="w-full bg-white border border-slate-200 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all text-sm"
                         />
@@ -272,25 +262,25 @@ export default function UserDaftarPengurus() {
 
                 <div className="border-t border-slate-200"></div>
 
-                {/* Pilihan Divisi */}
+                {/* Pilihan Manajemen */}
                 <div>
                   <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <Briefcase className="w-5 h-5 text-blue-600" />
-                    Pilihan Divisi <span className="text-red-500">*</span>
+                    Pilihan Manajemen <span className="text-red-500">*</span>
                   </h3>
                   <p className="text-sm text-slate-500 mb-4">
-                    Pilih satu divisi yang paling sesuai dengan minat dan bakat
-                    Anda
+                    Pilih satu Manajemen yang paling sesuai dengan minat dan
+                    bakat Anda
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {divisions.map((div) => {
+                    {Manajemenons.map((div) => {
                       const Icon = div.icon;
-                      const isSelected = selectedDivision === div.id;
+                      const isSelected = selectedManajemenon === div.id;
                       return (
                         <button
                           key={div.id}
                           type="button"
-                          onClick={() => setSelectedDivision(div.id)}
+                          onClick={() => setSelectedManajemenon(div.id)}
                           className={`relative p-4 rounded-2xl border-2 text-left transition-all duration-200 group ${
                             isSelected
                               ? "border-blue-500 bg-blue-50/50 shadow-md"
@@ -376,7 +366,7 @@ export default function UserDaftarPengurus() {
                 <div className="border-t border-slate-200"></div>
 
                 {/* Upload Dokumen */}
-                <div>
+                {/* <div>
                   <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
                     <Upload className="w-5 h-5 text-blue-600" />
                     Upload Dokumen Pendukung
@@ -392,7 +382,7 @@ export default function UserDaftarPengurus() {
                       Format PDF, JPG, atau PNG (Maks. 5MB)
                     </p>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Terms & Submit */}
                 <div className="space-y-4 pt-2">
@@ -447,14 +437,14 @@ export default function UserDaftarPengurus() {
             </motion.div>
 
             {/* Info Section (Kanan - 1 Kolom) */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
               className="space-y-6"
-            >
-              {/* Benefit Card */}
-              <div className="bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-xl shadow-slate-200/50 p-6">
+            > */}
+            {/* Benefit Card */}
+            {/* <div className="bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-xl shadow-slate-200/50 p-6">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-amber-600" />
@@ -480,10 +470,10 @@ export default function UserDaftarPengurus() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </div> */}
 
-              {/* Timeline Card */}
-              <div className="bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-xl shadow-slate-200/50 p-6">
+            {/* Timeline Card */}
+            {/* <div className="bg-white/70 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-xl shadow-slate-200/50 p-6">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
                     <Clock className="w-5 h-5 text-blue-600" />
@@ -528,10 +518,10 @@ export default function UserDaftarPengurus() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
-              {/* Contact Card */}
-              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-xl shadow-blue-500/20">
+            {/* Contact Card */}
+            {/* <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white shadow-xl shadow-blue-500/20">
                 <h3 className="text-lg font-bold mb-2">Butuh Bantuan?</h3>
                 <p className="text-blue-100 text-sm mb-4">
                   Hubungi panitia seleksi jika ada kendala dalam pendaftaran.
@@ -547,7 +537,7 @@ export default function UserDaftarPengurus() {
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </div>
         </main>
       </div>

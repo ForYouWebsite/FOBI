@@ -114,7 +114,7 @@ export default function DashboardAdmin() {
           color: "emerald",
         },
         {
-          title: "KTA",
+          title: "KTP",
           value: "100",
           change: -3.1,
           icon: CreditCard,
@@ -146,7 +146,7 @@ export default function DashboardAdmin() {
         },
         {
           id: 3,
-          action: "Permintaan KTA pending",
+          action: "Permintaan KTP pending",
           user: "Budi Santoso",
           timestamp: "1 jam yang lalu",
           status: "warning",

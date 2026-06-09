@@ -139,14 +139,14 @@ export default function CreateProker() {
         formData.append("end_date", form.end_date);
         formData.append("image", selectedFile);
 
-        await API.post("/proker", formData, {
+        await API.post("/event", formData, {
           headers: {
             Authorization: `Bearer ${cleanToken}`,
             "Content-Type": "multipart/form-data",
           },
         });
       } else {
-        await API.post("/proker", form, {
+        await API.post("/event", form, {
           headers: {
             Authorization: `Bearer ${cleanToken}`,
             "Content-Type": "application/json",
@@ -157,7 +157,7 @@ export default function CreateProker() {
       toast.success("Program kerja berhasil ditambahkan");
 
       setTimeout(() => {
-        router.push("/admin/proker");
+        router.push("/admin/event");
         router.refresh();
       }, 1200);
     } catch (err: any) {

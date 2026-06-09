@@ -81,10 +81,10 @@ export default function SideBar({ onToggle }: SideBarProps) {
           path: "/admin/pengurus",
         },
         {
-          id: "kta",
-          label: "Manajemen KTA",
+          id: "ktp",
+          label: "Manajemen KTP",
           icon: CreditCard,
-          path: "/admin/kta",
+          path: "/admin/ktp",
         },
         {
           id: "shop",
@@ -161,12 +161,12 @@ export default function SideBar({ onToggle }: SideBarProps) {
         icon: Calendar,
         path: "/user/events",
       },
-      {
-        id: "settings",
-        label: "Pengaturan",
-        icon: Settings,
-        path: "/user/settings",
-      },
+      // {
+      //   id: "settings",
+      //   label: "Pengaturan",
+      //   icon: Settings,
+      //   path: "/user/settings",
+      // },
     ];
   }, [user]);
 

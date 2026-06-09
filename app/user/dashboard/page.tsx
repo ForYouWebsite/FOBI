@@ -42,14 +42,14 @@ export default function UserDashboard() {
         },
         stats: {
           membershipStatus: "Aktif",
-          ktaStatus: "Sudah Terbit",
+          ktpstatus: "Sudah Terbit",
           activeEvents: 3,
           totalPengurus: 12,
         },
         announcements: [
           {
             id: 1,
-            title: "Pendaftaran Anggota Baru Dibuka!",
+            title: "Pendaftaran Pengurus Baru Dibuka!",
             content:
               "Segera daftarkan diri Anda untuk menjadi bagian dari FOBI",
             date: "2024-06-15",
@@ -159,7 +159,7 @@ export default function UserDashboard() {
           </motion.div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
             {[
               {
                 title: "Status Keanggotaan",
@@ -170,10 +170,10 @@ export default function UserDashboard() {
               },
               {
                 title: "Kartu Anggota",
-                value: dashboardData?.stats.ktaStatus || "-",
+                value: dashboardData?.stats.ktpstatus || "-",
                 icon: CreditCard,
                 color: "blue",
-                subtitle: "KTA Digital",
+                subtitle: "KTP Digital",
               },
               {
                 title: "Event Aktif",
@@ -216,7 +216,7 @@ export default function UserDashboard() {
                 </motion.div>
               );
             })}
-          </div>
+          </div> */}
 
           {/* Announcements & Upcoming Events */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
